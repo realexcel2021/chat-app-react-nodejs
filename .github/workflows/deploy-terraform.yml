@@ -1,0 +1,66 @@
+name: Deploy Terraform Infrasctructure
+
+on: 
+    workflow_dispatch:
+
+    push:
+        branches:
+            - main
+        paths:
+            terraform/**
+    
+    pull_request:
+        branches:
+            - main
+        paths:
+            terraform/**
+            
+jobs:
+
+    lint-terraform-code:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./terraform
+
+        steps:
+
+            - name: Checkout terraform code
+              uses: actions/checkout@v4
+              with:
+                sparse-checkout: |
+                    terraform
+            
+            - uses: actions/cache@v2
+              name: Cache plugin dir
+              with:
+                path: ~/.tflint.d/plugins
+                key: ${{ matrix.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
+              
+            - uses: terraform-linters/setup-tflint@v2
+              name: Setup TFLint
+              with:
+                github_token: ${{ secrets.CI_GITHUB_TOKEN }}
+                
+        # Print TFLint version
+            - name: Show version
+              run: tflint --version
+            
+        # Install plugins
+            - name: Init TFLint
+              run: tflint --init
+            
+        # Run tflint command in each directory recursively # use --force if you want to continue with workflow although errors are there
+            - name: Run TFLint
+              run: tflint -f compact --recursive 
+
+    
+    deploy-terraform-code:
+
+        needs: lint-terraform-code
+
+        runs-on: ubuntu-lates
+        defaults:
+            run:
+                working-directory: ./terraform
+    
