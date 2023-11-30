@@ -55,3 +55,23 @@ variable "public_subnet_tags" {
   type = object({
   })
 }
+
+# s3 bucket for the frontend
+variable "frontend_bucket_name" {
+  type = string
+}
+
+# identifier for the database
+variable "cluster_identifier" {
+  type = string
+}
+
+# number of document db intance
+variable "docdb_count" {
+  type = number
+}
+
+# instance class of the docdb cluster
+variable "docdb_class" {
+  type = string
+}

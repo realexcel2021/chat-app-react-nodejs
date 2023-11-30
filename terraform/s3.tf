@@ -3,30 +3,31 @@
 module "s3_bucket" {
   source = "terraform-aws-modules/s3-bucket/aws"
 
-  bucket = "my-s3-bucket"
-  acl    = "private"
-  website = true
+  bucket                  = var.frontend_bucket_name
+  acl                     = "private"
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+  website = {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
 
-  cors_rule = jsonencode([
+  cors_rule = [
     {
-        "AllowedHeaders" : [
-          "*"
-        ],
-        "AllowedMethods": [
-            "PUT",
-            "POST",
-            "DELETE"
-        ],
-        "AllowedOrigins": [
-            "*"
-        ],
-    }
-  ])
+      allowed_methods = ["PUT", "POST"]
+      allowed_origins = ["*"]
+      allowed_headers = ["*"]
 
-  policy = data.aws_iam_policy_document.allow_access.json
+    },
+  ]
+
+  attach_policy            = true
+  policy                   = data.aws_iam_policy_document.allow_access.json
   control_object_ownership = true
   object_ownership         = "ObjectWriter"
-  force_destroy = true
+  force_destroy            = true
 
   versioning = {
     enabled = true
@@ -39,7 +40,7 @@ data "aws_iam_policy_document" "allow_access" {
   statement {
     sid       = "AllowCloudFrontServicePrincipal"
     actions   = ["s3:GetObject"]
-    resources = ["${module.s3_bucket.bucket_arn}/*"]
+    resources = ["${module.s3_bucket.s3_bucket_arn}/*"]
 
     principals {
       type        = "*"
