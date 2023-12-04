@@ -39,7 +39,13 @@ module "app_ecs_service" {
       portMappings = [
         {
           containerPort = 3000
-          hostPort      = 3000
+          hostPort      = 300
+        }
+      ]
+      secrets = [
+        {
+          name = "MONGO_URL"
+          valueFrom = aws_secretsmanager_secret.db-endpoint.arn
         }
       ]
     }

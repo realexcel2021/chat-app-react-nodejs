@@ -24,12 +24,25 @@ module "backend-lb" {
       prefix_list_ids = data.aws_ec2_managed_prefix_list.cloudfront.id 
     },
   ]
+
+  egress_with_source_security_group_id = [
+
+    {
+      from_port = 3000
+      to_port   = 3000
+      protocol  = "tcp"
+      description = "Allow outbound traffic to flow to the ecs tasks"
+      source_security_group_id = module.ecs_sg.security_group_id
+    }
+
+  ]
+
 }
 
 module "ecs_sg" {
   source = "terraform-aws-modules/security-group/aws"
 
-  name        = "snappy-database-sg"
+  name        = "snappy-backend-sg"
   description = "Security group for ecs allows only traffic from loadbalancer"
   vpc_id      = module.vpc.vpc_id
 
@@ -42,6 +55,20 @@ module "ecs_sg" {
       source_security_group_id = module.backend-lb.security_group_id
     },
   ]
+
+  
+  egress_with_cidr_blocks  = [
+
+    {
+      from_port     = 0
+      to_port       = 65535
+      protocol      = "tcp"
+      description   = "Allow outbound traffic to ecs tasks"
+      cidr_blocks   = "0.0.0.0/0"
+    }
+
+  ]
+
 }
 
 # security group for the document db
