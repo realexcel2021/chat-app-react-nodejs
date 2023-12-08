@@ -1,5 +1,13 @@
 # backend ECS cluster and service and task definition using modules
 
+data "template_file" "task_def" {
+    template = file("./json/backend-task-def.tpl")
+
+    vars = {
+      secret_value = aws_secretsmanager_secret.db-endpoint.arn
+    }
+}
+
 data "aws_caller_identity" "current" {}
 
 resource "aws_ecs_cluster" "backend-cluster" {
@@ -25,31 +33,12 @@ module "app_ecs_service" {
   ecs_use_fargate               = true
   assign_public_ip              = false
   manage_ecs_security_group     = false
+  container_image               = aws_ecr_repository.be-repo.repository_url 
   additional_security_group_ids = [ module.ecs_sg.security_group_id ]
 
-  container_definitions = jsonencode([
-     {
-      name      = "backend-express"
-      essential = true
-      requiresCompatibilities = "FARGATE"
-      image     = aws_ecr_repository.be-repo.repository_url
-      cpu       = 10
-      memory    = 512
-      essential = true
-      portMappings = [
-        {
-          containerPort = 3000
-          hostPort      = 300
-        }
-      ]
-      secrets = [
-        {
-          name = "MONGO_URL"
-          valueFrom = aws_secretsmanager_secret.db-endpoint.arn
-        }
-      ]
-    }
-  ])
+  logs_cloudwatch_retention     = 7
+
+  container_definitions = data.template_file.task_def.rendered
 
   
 

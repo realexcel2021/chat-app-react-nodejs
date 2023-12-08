@@ -2,7 +2,7 @@
 # Includes all the IAM policies that are attached to roles created by modules
 ##############################################################################
 
-# policy for ECS backend task to retrieve secrets
+# policy for ECS backend task to retrieve secret db endpoint
 
 resource "aws_iam_policy" "ssm-policy" {
   name        = "ecs-backend-task-ssm-policy"
@@ -19,6 +19,7 @@ resource "aws_iam_policy" "ssm-policy" {
         "secretsmanager:GetSecretValue"
         ]
         Effect   = "Allow"
+        Principal = "*"
         Resource = [
             "${aws_secretsmanager_secret.db-endpoint.arn}"
         ]
@@ -29,6 +30,6 @@ resource "aws_iam_policy" "ssm-policy" {
 
 resource "aws_iam_policy_attachment" "ssm-attach" {
   name       = "ecs-backend-ssm-attach"
-  roles      = [ module.app_ecs_service.task_role_name ]
+  roles      = [ module.app_ecs_service.task_execution_role_name ]
   policy_arn = aws_iam_policy.ssm-policy.arn
 }

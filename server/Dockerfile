@@ -1,9 +1,6 @@
 # use the node js alpine image
 FROM node:alpine
 
-# creating a custom user in the container
-USER backend
-
 # set work directory for the application
 WORKDIR /app
 
