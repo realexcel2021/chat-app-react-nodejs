@@ -7,7 +7,7 @@ resource "random_password" "master" {
 
 # database password secret
 resource "aws_secretsmanager_secret" "password" {
-  name = "snappy-db-password-4"
+  name = "snappy-db-password-whwh"
   recovery_window_in_days = 7
 }
 
@@ -19,7 +19,7 @@ resource "aws_secretsmanager_secret_version" "password" {
 
 # database endpoint secret
 resource "aws_secretsmanager_secret" "db-endpoint" {
-  name       = "snappy-db-endpoint-4"
+  name       = "snappy-db-endpoint-whwh"
   recovery_window_in_days = 7
   depends_on = [aws_docdb_cluster.docdb]
 }

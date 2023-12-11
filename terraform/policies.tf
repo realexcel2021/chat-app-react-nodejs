@@ -6,7 +6,6 @@
 
 resource "aws_iam_policy" "ssm-policy" {
   name        = "ecs-backend-task-ssm-policy"
-  path        = "/"
   description = "Policy for ECS backend tasks to get secrets from Secrets manager"
 
   
@@ -19,7 +18,6 @@ resource "aws_iam_policy" "ssm-policy" {
         "secretsmanager:GetSecretValue"
         ]
         Effect   = "Allow"
-        Principal = "*"
         Resource = [
             "${aws_secretsmanager_secret.db-endpoint.arn}"
         ]

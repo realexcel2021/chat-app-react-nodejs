@@ -3,8 +3,7 @@
     "name"     : "backend-express",
     "essential" : true,
     "requiresCompatibilities" : "FARGATE",
-    "user"      : "backend",
-    "User"      : "backend",
+    "image" : "${image}",
     "portMappings" : [
     {
         "containerPort" : 3000,
@@ -16,6 +15,15 @@
         "name" : "MONGO_URL",
         "valueFrom" : "${secret_value}"
     }
-    ]
+    ],
+    "logConfiguration": {
+            "logDriver": "awslogs",
+            "options": {
+                "awslogs-group": "${log_group}",
+                "awslogs-region": "us-west-2",
+                "awslogs-create-group": "true",
+                "awslogs-stream-prefix": "firelens"
+            }
   }
-  ]
+}
+]

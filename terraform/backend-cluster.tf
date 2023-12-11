@@ -5,6 +5,8 @@ data "template_file" "task_def" {
 
     vars = {
       secret_value = aws_secretsmanager_secret.db-endpoint.arn
+      log_group    = module.app_ecs_service.awslogs_group
+      image        = aws_ecr_repository.be-repo.repository_url
     }
 }
 
