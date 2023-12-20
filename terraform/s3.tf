@@ -1,4 +1,5 @@
 # S3 bucket for the frontend and some rules on it
+#https://landadevopsjob.com/experience-builder/terraform/
 
 module "s3_bucket" {
   source = "terraform-aws-modules/s3-bucket/aws"
