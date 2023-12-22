@@ -1,4 +1,4 @@
-export const host = "https://di7bw486wt2dc.cloudfront.net";
+export const host = "https://snappy.myakuracy.click";
 export const loginRoute = `${host}/api/auth/login`;
 export const registerRoute = `${host}/api/auth/register`;
 export const logoutRoute = `${host}/api/auth/logout`;
